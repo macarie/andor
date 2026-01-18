@@ -1,0 +1,33 @@
+name: setup-node
+description: Sets up Node.js, pnpm, caching, and installs dependencies
+
+inputs:
+  node-version:
+    description: |
+      Version Spec of the version to use in SemVer notation.
+      It also admits such aliases as `lts/*`, `latest`, nightly and canary builds
+
+      Examples: `12.x`, `10.15.1`, `>=10.15.0`, `lts/Hydrogen`, `16-nightly`, `latest`, `node`
+
+runs:
+  using: "composite"
+
+  steps:
+    - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+      with:
+        node-version: ${{ inputs.node-version }}
+    - run: npm install -g corepack@0.34.5
+      shell: bash
+    - run: corepack enable
+      shell: bash
+    - id: pnpm-cache
+      run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      shell: bash
+    - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+    - run: pnpm install --frozen-lockfile
+      shell: bash

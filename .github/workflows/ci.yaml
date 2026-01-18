@@ -1,0 +1,52 @@
+name: ci
+
+on:
+  pull_request:
+    branches: ["*"]
+  push:
+    branches:
+      - trunk
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04-arm
+
+    strategy:
+      matrix:
+        node-version: [20, 22, 24, latest]
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: ./.github/actions/setup-node
+        with:
+          node-version: ${{matrix.node-version}}
+      - run: pnpm --color run check.types
+      - run: pnpm --color run test
+
+  formatting:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: ./.github/actions/setup-node
+        with:
+          node-version: 24
+      - run: pnpm --color run check.source.ci
+
+  ci:
+    runs-on: ubuntu-24.04-arm
+
+    # add jobs that need to be checked for overall pipeline success
+    needs: [formatting, tests]
+
+    if: always() && !cancelled()
+
+    steps:
+      - if: contains(needs.*.result, 'failure')
+        run: |
+          echo "::error::Some pipeline jobs failed - check individual job logs for details"
+          exit 1

@@ -1,0 +1,66 @@
+{
+	"name": "@macarie/andor",
+	"type": "module",
+	"version": "0.0.0",
+	"description": "Lightweight parser for human-readable filter expressions with boolean logic and wildcard matching",
+	"author": {
+		"name": "Raul Macarie",
+		"email": "npm@macarie.email",
+		"url": "https://macarie.me"
+	},
+	"license": "MIT",
+	"funding": "https://github.com/sponsors/macarie",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/macarie/andor.git"
+	},
+	"bugs": {
+		"url": "https://github.com/macarie/andor/issues"
+	},
+	"keywords": [
+		"filter",
+		"expression",
+		"boolean",
+		"parser",
+		"query",
+		"selector",
+		"predicate",
+		"wildcard",
+		"dsl"
+	],
+	"sideEffects": false,
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"engines": {
+		"node": "^20.0.0 || ^22.0.0 || >=24.0.0"
+	},
+	"files": [
+		"dist"
+	],
+	"devEngines": {
+		"packageManager": {
+			"name": "pnpm",
+			"version": "10.28.0+sha512.05df71d1421f21399e053fde567cea34d446fa02c76571441bfc1c7956e98e363088982d940465fd34480d4d90a0668bc12362f8aa88000a64e83d0b0e47be48",
+			"onFail": "error"
+		}
+	},
+	"scripts": {
+		"build": "rolldown --config",
+		"check.types": "tsc --build",
+		"check.source": "biome check .",
+		"check.source.ci": "biome ci .",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.11",
+		"@types/node": "^25.0.9",
+		"rolldown": "1.0.0-beta.60",
+		"rolldown-plugin-dts": "^0.21.2",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.17"
+	}
+}
